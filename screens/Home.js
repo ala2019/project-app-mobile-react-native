@@ -1,10 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import * as Notifications from "expo-notifications";
 
 export default function Home() {
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== "granted") {
+        await Notifications.requestPermissionsAsync();
+      }
+    };
+    requestNotificationPermission();
+  }, []);
+
+  const logout = async () => {
+    if (Platform.OS === "android") {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Déconnexion réussie",
+          body: "Vous êtes maintenant connecté à l'application.",
+        },
+        trigger: null, // Send immediately
+      });
+    }
+
+    navigation.navigate("Login");
+  };
 
   return (
     <View style={styles.container}>
@@ -34,6 +65,14 @@ export default function Home() {
         >
           <Ionicons name="settings-outline" size={30} color="#4CAF50" />
           <Text style={styles.cardText}>Paramètres</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.card, { backgroundColor: "#e74c3c" }]} // Optional: change background color to indicate logout
+          onPress={logout}
+        >
+          <Ionicons name="log-out-outline" size={30} color="#fff" />
+          <Text style={[styles.cardText, { color: "#fff" }]}>Déconnexion</Text>
         </TouchableOpacity>
       </View>
     </View>
