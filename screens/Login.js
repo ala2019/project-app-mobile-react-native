@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,20 +7,44 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Platform,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+
+import * as Notifications from "expo-notifications";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== "granted") {
+        await Notifications.requestPermissionsAsync();
+      }
+    };
+    requestNotificationPermission();
+  }, []);
+
+  const handleLogin = async () => {
     if (email === "" || password === "") {
       Alert.alert("Erreur", "Veuillez remplir tous les champs.");
     } else {
-      // Ajoutez ici votre logique de connexion (API, validation, etc.)
-      Alert.alert("Succès", "Connexion réussie !");
-      navigation.navigate("Home"); // Remplacez par votre écran d'accueil
+      // alert("Connexion réussie !");
+
+      // Second, call scheduleNotificationAsync()
+      if (Platform.OS === "android") {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Connexion réussie",
+            body: "Vous êtes maintenant connecté à l'application.",
+          },
+          trigger: null, // Send immediately
+        });
+      }
+
+      navigation.navigate("Home");
     }
   };
 
