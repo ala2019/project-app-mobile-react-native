@@ -12,10 +12,13 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import * as Notifications from "expo-notifications";
+import { useAuth } from "../context/AuthContext";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { login } = useAuth();
 
   useEffect(() => {
     const requestNotificationPermission = async () => {
@@ -32,7 +35,7 @@ const Login = ({ navigation }) => {
       Alert.alert("Erreur", "Veuillez remplir tous les champs.");
     } else {
       // alert("Connexion réussie !");
-
+      login(email, password);
       // Second, call scheduleNotificationAsync()
       if (Platform.OS === "android") {
         await Notifications.scheduleNotificationAsync({

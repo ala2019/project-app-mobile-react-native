@@ -16,6 +16,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 // import { createStackNavigator } from "@react-navigation/stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import { AuthProvider } from "./context/AuthContext";
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -70,25 +71,31 @@ export default function App() {
   const [isStartPage, setIsStartPage] = useState(true); // Control initial screen
 
   return (
-    <NavigationContainer>
-      <Drawer.Navigator initialRouteName="StartPage">
-        <Drawer.Screen name="StartPage" options={{ headerShown: false }}>
-          {(props) => <StartPage {...props} />}
-        </Drawer.Screen>
+    <AuthProvider>
+      <NavigationContainer>
+        <Drawer.Navigator initialRouteName="StartPage">
+          <Drawer.Screen name="StartPage" options={{ headerShown: false }}>
+            {(props) => <StartPage {...props} />}
+          </Drawer.Screen>
 
-        <Drawer.Screen name="Home" component={TabNavigator} />
-        <Drawer.Screen
-          name="Login"
-          component={Login}
-          options={{ headerShown: false }}
-        />
-        <Drawer.Screen
-          name="Register"
-          component={Register}
-          options={{ headerShown: false }}
-        />
-      </Drawer.Navigator>
-    </NavigationContainer>
+          <Drawer.Screen
+            name="Home"
+            component={TabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Drawer.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
+          <Drawer.Screen
+            name="Register"
+            component={Register}
+            options={{ headerShown: false }}
+          />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
 

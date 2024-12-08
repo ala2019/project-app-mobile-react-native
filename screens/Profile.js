@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 //import * as ImagePicker from "expo-image-picker";
 import { Platform } from "react-native";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
   const [profileImage, setProfileImage] = useState(null);
+
+  const { authState } = useAuth();
 
   const openCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -38,7 +41,7 @@ export default function Profile() {
           <Text style={styles.cameraButtonText}>Prendre une photo</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.name}>Nom Utilisateur</Text>
+      <Text style={styles.name}>{authState?.email ?? "email"}</Text>
     </View>
   );
 }
