@@ -91,6 +91,9 @@ const Profile = ({ afterSaveEmage, close }) => {
           <TouchableOpacity style={styles.button} onPress={() => savePic()}>
             <Text style={styles.text}>Sauvegarde</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={close}>
+            <Text style={styles.text}>Annuler</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>

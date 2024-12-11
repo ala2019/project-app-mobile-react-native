@@ -30,14 +30,14 @@ const TabNavigator = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Home") {
+          if (route.name === "Acceuil") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Article") {
             iconName = focused ? "cube" : "cube-outline";
           } else if (route.name === "Profile") {
             iconName = focused ? "person" : "person-outline";
-          } else if (route.name === "Settings") {
-            iconName = focused ? "settings" : "settings-outline";
+          } else if (route.name === "Deconnexion") {
+            iconName = focused ? "settings" : "log-out-outline";
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -47,7 +47,7 @@ const TabNavigator = () => {
       })}
     >
       <Tab.Screen
-        name="Home"
+        name="Acceuil"
         component={Home}
         options={{ headerShown: false, headerTitle: null }}
       />
@@ -62,7 +62,7 @@ const TabNavigator = () => {
         options={{ headerShown: false }}
       />
       <Tab.Screen
-        name="Settings"
+        name="Deconnexion"
         listeners={({ navigation }) => ({
           tabPress: (e) => {
             e.preventDefault(); // Prevent default navigation
