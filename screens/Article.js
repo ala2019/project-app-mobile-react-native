@@ -13,34 +13,55 @@ export default function Article() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fonction pour récupérer les données depuis l'API
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/posts") // Remplacez avec votre propre API
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchArticles = async () => {
+      try {
+        const response = await fetch(
+          "http://192.168.1.19:8080/apis/articles/all"
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
         setArticles(data);
-        setLoading(false);
-      })
-      .catch((error) => {
+        console.log(data);
+      } catch (error) {
         console.error("Erreur lors de la récupération des articles :", error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchArticles();
   }, []);
 
-  // Fonction pour afficher chaque article
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => alert(`Article: ${item.title}`)}
+      //onPress={() => alert(`Nom: ${item.nom || "N/A"}`)}
     >
-      <Ionicons name="document-text-outline" size={24} color="#4CAF50" />
+      <Ionicons name="pricetag-outline" size={24} color="#4CAF50" />
       <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{item.title}</Text>
         <Text style={styles.cardBody}>
-          {item.body.length > 60
-            ? `${item.body.substring(0, 60)}...`
-            : item.body}
+          ID Article: {item.idArticle || "N/A"}
         </Text>
+
+        <Text style={styles.cardTitle}>Détails de l'article</Text>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Code Article:</Text>
+          <Text style={styles.detailValue}>{item.code || "N/A"}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Référence:</Text>
+          <Text style={styles.detailValue}>{item.reference || "N/A"}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Description:</Text>
+          <Text style={styles.detailValue}>{item.description || "N/A"}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Prix Achat:</Text>
+          <Text style={styles.detailValue}>{item.prixAchat || "N/A"}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -53,7 +74,9 @@ export default function Article() {
       ) : (
         <FlatList
           data={articles}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) =>
+            item.id ? item.id.toString() : index.toString()
+          }
           renderItem={renderItem}
           contentContainerStyle={styles.list}
         />
@@ -104,5 +127,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     marginTop: 5,
+  },
+  cardContent: {
+    marginLeft: 10,
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 5,
+  },
+  detailLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#666",
+  },
+  detailValue: {
+    fontSize: 14,
+    color: "#333",
   },
 });

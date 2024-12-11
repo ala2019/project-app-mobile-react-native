@@ -18,34 +18,47 @@ const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { login } = useAuth();
-
+  const { login, isAuthenticated } = useAuth();
   useEffect(() => {
     const requestNotificationPermission = async () => {
-      const { status } = await Notifications.getPermissionsAsync();
-      if (status !== "granted") {
-        await Notifications.requestPermissionsAsync();
-      }
+      // const { status } = await Notifications.getPermissionsAsync();
+      // console.log(status);
+      // if (status != "granted") {
+      //   console.log("sss");
+
+      await Notifications.requestPermissionsAsync();
+      // }
     };
     requestNotificationPermission();
   }, []);
-
+  const schedulePushNotification = async () => {
+    console.log("inNotif");
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Connexion réussie",
+        body: "Vous êtes maintenant connecté à l'application.",
+      },
+      trigger: {
+        repeats: false,
+        seconds: 60,
+      },
+    });
+    console.log("inNotissssssf");
+  };
   const handleLogin = async () => {
     if (email === "" || password === "") {
       Alert.alert("Erreur", "Veuillez remplir tous les champs.");
     } else {
       // alert("Connexion réussie !");
+      console.log("sdfsdfsdf");
       login(email, password);
-      // Second, call scheduleNotificationAsync()
-      if (Platform.OS === "android") {
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "Connexion réussie",
-            body: "Vous êtes maintenant connecté à l'application.",
-          },
-          trigger: null, // Send immediately
-        });
-      }
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Connexion réussie",
+          body: "Vous êtes maintenant connecté à l'application.",
+        },
+        trigger: null,
+      });
 
       navigation.navigate("Home");
     }
@@ -53,10 +66,7 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: "https://via.placeholder.com/150" }} // Remplacez par votre logo
-        style={styles.logo}
-      />
+      <Image source={require("../assets/logo.png")} style={styles.logo} />
       <Text style={styles.title}>Bienvenue</Text>
       <Text style={styles.subtitle}>Connectez-vous pour continuer</Text>
 
@@ -117,9 +127,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 237,
+    height: 202,
     marginBottom: 20,
+    resizeMode: "contain",
   },
   title: {
     fontSize: 24,

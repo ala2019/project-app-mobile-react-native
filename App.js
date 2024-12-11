@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -8,6 +8,7 @@ import Profile from "./screens/Profile";
 import Settings from "./screens/Settings";
 import Article from "./screens/Article";
 import StartPage from "./screens/StartPage";
+import Camera from "./screens/camera";
 
 import Login from "./screens/Login";
 import Register from "./screens/Register";
@@ -16,12 +17,13 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 // import { createStackNavigator } from "@react-navigation/stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 const TabNavigator = () => {
+  const { logout, logedIn } = useAuth();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -37,9 +39,9 @@ const TabNavigator = () => {
           } else if (route.name === "Settings") {
             iconName = focused ? "settings" : "settings-outline";
           }
-
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+
         tabBarActiveTintColor: "blue",
         tabBarInactiveTintColor: "gray",
       })}
@@ -61,6 +63,12 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Settings"
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault(); // Prevent default navigation
+            navigation.navigate("Login");
+          },
+        })}
         component={Settings}
         options={{ headerShown: false }}
       />
@@ -69,7 +77,6 @@ const TabNavigator = () => {
 };
 export default function App() {
   const [isStartPage, setIsStartPage] = useState(true); // Control initial screen
-
   return (
     <AuthProvider>
       <NavigationContainer>

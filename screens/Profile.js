@@ -1,34 +1,33 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-//import * as ImagePicker from "expo-image-picker";
-import { Platform } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import { useNavigation } from "@react-navigation/native"; // Importation du hook
+import CameraScreen from "./camera";
 
 export default function Profile() {
   const [profileImage, setProfileImage] = useState(null);
-
+  const navigation = useNavigation(); // Utilisation du hook pour accéder à la navigation
   const { authState } = useAuth();
 
-  const openCamera = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status === "granted") {
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-      if (!result.canceled) {
-        setProfileImage(result.uri);
-      }
-    } else {
-      console.log("Permission denied");
-    }
+  const [openCamera, setOpenCamera] = useState(false);
+
+  const afterSaveEmage = (url) => {
+    setProfileImage(url);
+    setOpenCamera(false);
+
+    return true;
   };
+
+  const closeCamer = () => {
+    setOpenCamera(false);
+  };
+
+  if (openCamera)
+    return <CameraScreen afterSaveEmage={afterSaveEmage} close={closeCamer} />;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profil</Text>
+      <Text style={styles.title}>Mon Profil</Text>
       <View style={styles.profileContainer}>
         {profileImage ? (
           <Image source={{ uri: profileImage }} style={styles.profileImage} />
@@ -37,8 +36,11 @@ export default function Profile() {
             <Text style={styles.placeholderText}>Photo</Text>
           </View>
         )}
-        <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-          <Text style={styles.cameraButtonText}>Prendre une photo</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setOpenCamera(true)} // Utilisation de navigation ici
+        >
+          <Text style={styles.buttonText}>Modifier</Text>
         </TouchableOpacity>
       </View>
       <Text style={styles.name}>{authState?.email ?? "email"}</Text>
@@ -47,52 +49,74 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
+  button: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "#4CAF50",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+    textTransform: "uppercase",
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#eaeaea",
     alignItems: "center",
     padding: 20,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 20,
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#2c3e50",
+    marginBottom: 30,
   },
   profileContainer: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 30,
   },
   profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 10,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 4,
+    borderColor: "#4CAF50",
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
   placeholder: {
-    width: 120,
-    height: 120,
-    backgroundColor: "#ddd",
-    borderRadius: 60,
+    width: 140,
+    height: 140,
+    backgroundColor: "#ccc",
+    borderRadius: 70,
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 4,
+    borderColor: "#4CAF50",
   },
   placeholderText: {
-    color: "#666",
-    fontSize: 18,
-  },
-  cameraButton: {
-    backgroundColor: "#4CAF50",
-    padding: 10,
-    borderRadius: 5,
-  },
-  cameraButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    color: "#555",
+    fontSize: 20,
+    fontWeight: "600",
   },
   name: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "500",
-    color: "#333",
+    color: "#2c3e50",
   },
 });

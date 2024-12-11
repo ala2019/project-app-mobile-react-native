@@ -32,9 +32,7 @@ export default function StartPage({ navigation }) {
       <TouchableOpacity
         style={styles.startButton}
         onPress={() => navigation.navigate("Home")}
-      >
-        <Text style={styles.startButtonText}>Commencer</Text>
-      </TouchableOpacity>
+      ></TouchableOpacity>
     </View>
   );
 }
